@@ -1,0 +1,80 @@
+\section{AEON Implementation}
+\label{secImp}
+
+The implementation of AEON is derived from two other open source projects:  \textbf{CryptoNote} and textbf{Monero}.\\
+\\
+The CryptoNote technology focuses on the ability to create crypto-currencies with untraceable transactions, CPU-friendly proof-of-work algorithm, and the ability of self-adjusting parameters such as block size and difficulty. Several crypto coins have been based on the CryptoNote technology.\\
+\\
+Monero is one of the earliest crypto currencies to use the features of CryptoNote, and has grown to be the most popular with a market cap well within the top 20 crypto coins.  AEON was started from the Monero code base, and modified only in ways that meet the specific vision and goals of the AEON community.\\
+\\
+This section will provide an overview of the implementation of the AEON cryptocurrency.
+
+\subsection{Proof of Work (PoW) Algorithm}
+AEON is a cryptocurrency which is distributed through a proof of work "mining" process.  For a definition of PoW, the Bitcoin Wiki at\\ https://en.bitcoin.it/wiki/Proof\_of\_work offers this:\\
+\\
+"A \textbf{proof of work} is a piece of data which is difficult (costly, time-consuming) to produce but easy for others to verify and which satisfies certain requirements. Producing a proof of work can be a random process with low probability so that a lot of trial and error is required \textit{on average} before a valid proof of work is generated."\\
+\\
+The goal of the proof of work process, is to provide decentralization of both the distribution of coins and the validation of transactions. The difficult trial-and-error nature of producing the PoW is an effective means of randomizing which miner will correctly validate the next block of transactions and receive the reward of new coins.\\
+\\
+A disadvantage of the PoW function for many cryptocurrencies (including Bitcoin) is that it relies solely on processor speed, which allows high-end GPU's and specialized mining hardware (ASICs) to have a great advantage in producing the correct proof of work. This condition leaves the majority of PC owners unable to participate in the mining process for coins, and creates an environment where relatively few miners control the network.  Thus, the goal of decentralization is somewhat defeated.\\
+\\
+An improved PoW algorithm, eventually called CryptoNight, was proposed in 2012 by the CryptoNote project. According to the CryptoNote whitepaper (https://cryptonote.org/whitepaper.pdf):\\
+\\
+"Our primary goal is to close the gap between CPU (majority) and GPU/FPGA/ASIC (minority) miners. It is appropriate that some users can have a certain advantage over others, but their investments should grow at least linearly with the power. More generally, producing special-purpose devices has to be as less profitable as possible."\\
+\\
+The algorithm accomplishes this goal in 2 primary ways.
+\begin{itemize}
+	\item It uses built-in CPU instructions, which are difficult to implement in specialized hardware.
+	\item It relies on access to unpredictable locations in a 2 MB "scratchpad" of CPU memory, rather than relying solely on CPU processing speed.
+\end{itemize}
+These factors effectively limit the advantages of GPU's over CPU's and make it too costly to produce specialized ASIC hardware for mining.\\
+\\
+AEON implements the \textbf{CryptoNight-Lite} algorithm for its proof of work. As the name suggests, this is a lightweight version of the original CryptoNight algorithm, which utilizes a 1 MB scratchpad.  This results in half the iterations needed to compute a hash, and half the required L3 cache CPU memory.  Many lower end processors (on mobile devices) will have the required 1 MB of CPU cache, and desktop multi-core processors will see up to a 4X performance boost over the heavier CryptoNight algorithm.
+
+\subsection{Anonymous Transactions}
+One of the goals for AEON transactions is to have the properties of \textit{physical cash} payments, as opposed to electronic payments.\\
+\\
+Consider the example of paying for a meal at a restaurant. With electronic payment (i.e. a credit card), there is a trusted 3rd party (i.e. Visa) which carries out the transaction for the payer and receiver. The trusted party must know both the payer's and receiver's identities and account information to settle the transaction. Additionally, the receiver will know the payer's name and account number.\\
+\\
+In contrast, paying for a meal with cash is \textit{trustless} (requires no trusted 3rd party to carry out the transaction). It is also \textit{anonymous} in that it does not require the payer to give their name or any other personal information to the receiver.\\
+\\
+The previous section explained how the PoW algorithm creates a decentralized trustless network of miners to approve transactions.  But to achieve anonymity we must keep the payer's and receiver's identities and account (wallet) information from being seen on the public blockchain.
+
+\subsubsection{One-Time-Use Keys}
+AEON uses the CryptoNote solution to receive payments at a one-time-use public key address, rather than the recipient's public wallet address.  The public key is generated by the sender, using both the recipient's public wallet address and some random data.  Once generated, funds are sent directly to this public key, which can be used only once.  The recipient can later spend any received coins, by using a one-time-use private key (called a \textbf{ring signature}) which corresponds to the one-time public key.\\
+\\
+The following picture, from the CryptoNote whitepaper, shows that the one-time public keys are never linked to the receiver's public wallet address on the blockchain.  This effectively keeps the receiving wallet anonymous.\\
+\\
+TODO:  insert figure here!\\
+\\
+\subsubsection{One-Time Ring Signatures}
+After funds are received via a one-time public key, the recipient is able to spend the funds at any time, using a one-time ring signature.  The goal of the ring signature is to keep the sending address anonymous on the blockchain.\\
+\\
+In non-private implementations, the sender will "sign" their payment transaction with a private key that can be validated only by using the sender's corresponding public key.  Only the sender knows the private key, but the whole world can see that the sender's public key was used to validate the transaction.\\
+\\
+The idea behind the ring signature is straightforward:  a sender produces a signature which can be validated by a set of public keys rather than a unique public key.  The identity of the one who produced the signature is indistinguishable from the owners of the additional public keys within the set.\\
+\\
+Consider an example:  Bob wishes to send 5 AEON to Kim.  The picture below shows the ring signature concept for this transaction on the blockchain.\\
+\\
+TODO:  insert figure here!\\
+\\
+Note in the example, that the 2 "decoy" public signatures are actually past transaction outputs that are pulled from the AEON blockchain. Thus, all 3 inputs in the set are valid signed inputs for 5 AEON, but only Bob's is valid for this transaction.  It is impossible for someone looking at this transaction on the blockchain to determine which of the 3 inputs was the valid one.  Additionally, all 3 of the inputs will likely show up as decoys in multiple other transactions.\\
+\\
+In the AEON blockchain, the default number of decoys, known as \textbf{mixins}, is set to 3.  The choosing of mixins is handled automatically by AEON. The sender may, however choose a different number of mixins for their transaction.  More than 3 mixins will result in a higher level of anonymity, but will require a higher transaction fee.  For non-sensitive transactions to be processed with a slightly lower fee, a mixin value of 0 can be chosen.  To preserve overall blockchain anonymity the number of 0-mixin transactions is limited to no more than 10\% of the transactions in each block.  Additionally, a mixin value of 1 is not allowed since it does not provide a high enough assurance against blockchain analysis.
+
+\subsubsection{Known Weaknesses}
+One possible attack against Anonymity is analysis based on the amounts sent in a transaction. If a bad actor knows, for example, that 0.9 coins have been sent at a certain time, then they may search for transactions containing 0.9 coins to attempt to identify a sender.  This is negated by the use of one-time keys and other factors, but the visibility of the amounts in the blockchain is a downside.\\
+\\
+Furthermore, as seen in the illustration in the previous section, the ring signature approach requires the specific amount of each of the mixins to match.  For less common amounts, there will be fewer public keys available for mixins, reducing the level of anonymity.\\
+\\
+The Monero development team has created a solution for these weaknesses, known as \textbf{Ring Confidential Transactions} (RingCT).  The AEON community plans to adopt this solution as soon as it can be validated.  There are more details on the new RingCT protocol in the Monero publication "Ring Confidential Transactions." (See https://lab.getmonero.org/pubs/MRL-0005.pdf.)
+
+\subsection{Block Reward and Max Supply}
+TODO:  write this section!\\
+\\
+Will cover:\\
+\\
+- Max Supply, including the tail emission, reasoning for the emission, etc.\\
+- should include a pic showing a timeline of when we will hit the tail, including expected avg block rewards along the way as they decrease\\
+- Describe the smoothly varying block reward, 4 min block time, difficulty retargeting.\\
+- Describe transaction fee calculations in this section
