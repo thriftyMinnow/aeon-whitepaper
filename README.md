@@ -1,7 +1,7 @@
 # aeon-whitepaper
 This is the proposed AEON community whitepaper.
 
-Look at aeon-whitepaper.pdf in Master to see the latest draft version.
+Look at **aeon-whitepaper.pdf** in the Master branch to see the latest draft version.
 
 Note, that this paper still has sections being worked on, as well as general formatting in progress.
 Feel free to suggest any changes, or make a pull request.
