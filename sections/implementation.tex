@@ -10,6 +10,7 @@ Monero is one of the earliest crypto currencies to use the features of CryptoNot
 This section will provide an overview of the implementation of the AEON cryptocurrency.
 
 \subsection{Proof of Work (PoW) Algorithm}
+\label{secPoW}
 AEON is a cryptocurrency which is distributed through a proof of work "mining" process.  For a definition of PoW, the Bitcoin Wiki at https://en.bitcoin.it/wiki/Proof\_of\_work offers this:\\
 \\
 "A \textbf{proof of work} is a piece of data which is difficult (costly, time-consuming) to produce but easy for others to verify and which satisfies certain requirements. Producing a proof of work can be a random process with low probability so that a lot of trial and error is required \textit{on average} before a valid proof of work is generated."\\
@@ -73,12 +74,56 @@ Furthermore, as seen in the illustration in the previous section, the ring signa
 \\
 The Monero development team has created a solution for these weaknesses, known as \textbf{Ring Confidential Transactions} (RingCT).  The AEON community plans to adopt this solution as soon as it can be validated.  There are more details on the new RingCT protocol in the Monero publication "Ring Confidential Transactions." (See https://lab.getmonero.org/pubs/MRL-0005.pdf.)
 
-\subsection{Block Reward and Max Supply}
-TODO:  write this section!\\
+\subsection{Coin Minting Process}
+TODO:  finish this section!\\
 \\
+As stated in section \ref{secPoW} \textit{Proof of Work (PoW)}, new AEON coins are distributed over time, to mining applications (called \textbf{nodes}), as a reward for calculating the correct Proof Of Work. This section will focus on the details of the coin distribution process.
+
+\subsubsection{Block Creation}
+One of the main functions of the mining node is to validate transactions as they are submitted to the network. For a transaction to be valid, it must pass several checks. The transaction must be properly formatted. The coins being spent must be "signed" by the valid owner of the coins. And finally, the coins being spent must not have already been spent by their owner in a previous block (a \textbf{double spend}). As the node receives and validates transactions, it places them together in a collection, called a \textbf{block}.\\
+\\
+As mentioned earlier in this paper, AEON implements an algorithm to automatically adjust the allowed block size up or down, based on the previous 100 blocks.  This effectively allows miners to include more transactions in each block when the network transaction rate requires it. Miners are not allowed to increase their block size indiscriminately, and are assessed a reward penalty if they create a block larger than the median size.\\
+\\
+Governing the block size is necessary, to keep the transaction processing speed uniform across all nodes in the network.
+
+
+\subsubsection{Block Time Interval}
+A single block of AEON transactions is added to the public blockchain once every 4 minutes, on average.  This timing must be controlled by constantly adjusting the \textit{difficulty} of the Proof Of Work calculation.  Otherwise the addition of more miners to the network would result in calculating the correct PoW faster and faster.  (The exact method of adjusting PoW difficulty is beyond the scope of this paper.)\\
+\\
+After a mining node assembles a single block of valid transactions, it races with other nodes to calculate the correct PoW. The node which calculates the correct PoW will broadcast its block to the other nodes it knows about, and they will also validate the entire block of transactions. Each node that accepts the block as valid will add the block to its copy of the public AEON blockchain, then broadcast the block to other nodes, and begin assembling a new block.  This continues until all the network nodes add the block.
+
+\subsubsection{Block Reward}
+When a mining node calculates a correct PoW and adds a block to the blockchain, it includes a transaction of new coins, paid to it's mining wallet.  This payment of new coins is known as the \textbf{block reward}. The number of coins in the block reward decreases with each block on a smooth curve, known as the \textbf{emission curve}. Each reward is calculated based on the following equation.
+
+\begin{equation*}
+   Reward = \frac{M-A}{2^{18}}
+\end{equation*}
+
+
+where \\
+\\
+\textit{
+	A = current supply in coins\\
+ 	M = maximum supply in coins = \begin{Large}$\frac{2^{64} - 1}{10^{12}}$ \end{Large} =} 18,446,744.073709551615\\
+\\
+Thus, the very first block reward on June 6, 2014 calculated to just over 70 AEON coins. Since the current supply of coins (A) increases with every new block, each successive reward will decrease by a small fraction of a coin. The reward continues to decrease until it equals 1.2 AEON per block. At that time, the initial emmission curve will end, and the \textbf{tail emission} will begin.\\
+\\
+The tail emission will continue without end, issuing a constant reward of 1.2 AEON for each 4 minute block. This works out to 432 new coins per day (157,680 per year), simulating an inflation rate of less than 1\%. This inflation rate naturally decreases over time as the supply increases.\\
+\\
+TODO: See the graph below for a visual representation of the AEON emission curves.\\
+
+\subsubsection{Transaction Fees}
+TODO:  Need details on transaction fees.
+
+When the transaction fees are greater than the block-size penalty, miners are likely to increase the block size which also increases the speed at which those transactions are processed.  This approach allows the AEON blockchain to self-adjust it's processing speed as transaction traffic increases and decreases over time, while also creating a dynamic market for transaction fees.\\
+\\
+
+
+
+% Is 2^18 the # of blocks in main emission??
+
 Will cover:\\
 \\
-- Max Supply, including the tail emission, reasoning for the emission, etc.\\
 - should include a pic showing a timeline of when we will hit the tail, including expected avg block rewards along the way as they decrease\\
-- Describe the smoothly varying block reward, 4 min block time, difficulty retargeting.\\
+
 - Describe transaction fee calculations in this section
