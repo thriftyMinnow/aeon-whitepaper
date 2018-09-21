@@ -62,7 +62,6 @@ Consider an example:  Bob wishes to send 5 AEON to Kim.  The picture below shows
 \begin{center}
 	\includegraphics[width=5.5in]{RingSignature}
 \end{center}
-
 Note in the example, that the 2 "decoy" public signatures are actually past transaction outputs that are pulled from the AEON blockchain. Thus, all 3 inputs in the set are valid signed inputs for 5 AEON, but only Bob's is valid for this transaction.  It is impossible for someone looking at this transaction on the blockchain to determine which of the 3 inputs was the valid one.  Additionally, all 3 of the inputs will likely show up as decoys in multiple other transactions.\\
 \\
 In the AEON blockchain, the default number of decoys, known as \textbf{mixins}, is set to 3.  The choosing of mixins is handled automatically by AEON. The sender may, however choose a different number of mixins for their transaction.  More than 3 mixins will result in a higher level of anonymity, but will require a higher transaction fee.  For non-sensitive transactions to be processed with a slightly lower fee, a mixin value of 0 can be chosen.  To preserve overall blockchain anonymity the number of 0-mixin transactions is limited to no more than 10\% of the transactions in each block.  Additionally, a mixin value of 1 is not allowed since it does not provide a high enough assurance against blockchain analysis.
@@ -88,29 +87,37 @@ Governing the block size is necessary, to keep the transaction processing speed 
 
 
 \subsubsection{Block Time Interval}
-A single block of AEON transactions is added to the public blockchain once every 4 minutes, on average.  This timing must be controlled by constantly adjusting the \textit{difficulty} of the Proof Of Work calculation.  Otherwise the addition of more miners to the network would result in calculating the correct PoW faster and faster.  (The exact method of adjusting PoW difficulty is beyond the scope of this paper.)\\
+A single block of AEON transactions is added to the public blockchain once every 4 minutes, on average.  This timing must be ensured by constantly adjusting the \textit{difficulty} of the Proof Of Work calculation.  Otherwise the addition of more miners to the network would result in calculating the correct PoW faster than the desired 4 minutes.\\
 \\
 After a mining node assembles a single block of valid transactions, it races with other nodes to calculate the correct PoW. The node which calculates the correct PoW will broadcast its block to the other nodes it knows about, and they will also validate the entire block of transactions. Each node that accepts the block as valid will add the block to its copy of the public AEON blockchain, then broadcast the block to other nodes, and begin assembling a new block.  This continues until all the network nodes add the block.
 
 \subsubsection{Block Reward}
-When a mining node calculates a correct PoW and adds a block to the blockchain, it includes a transaction of new coins, paid to it's mining wallet.  This payment of new coins is known as the \textbf{block reward}. The number of coins in the block reward decreases with each block on a smooth curve, known as the \textbf{emission curve}. Each reward is calculated based on the following equation.
+When a mining node calculates a correct PoW and adds a block to the blockchain, it includes a transaction of new coins, paid to it's mining wallet.  This payment of new coins is known as the \textbf{block reward}. The number of coins in the block reward decreases with each block on a smooth curve, known as the \textbf{emission curve}. Each reward is calculated based on the following equation:
 
 \begin{equation*}
    Reward = \frac{M-A}{2^{18}}
 \end{equation*}
-
-
-where \\
+where\\
 \\
 \textit{
 	A = current supply in coins\\
  	M = maximum supply in coins = \begin{Large}$\frac{2^{64} - 1}{10^{12}}$ \end{Large} =} 18,446,744.073709551615\\
 \\
-Since the current supply of coins (A) increases with every new block, each successive reward will decrease by a small fraction of a coin. The reward continues to decrease until it equals 1.2 AEON per block. At that time, the initial emmission curve will end, and the \textbf{tail emission} will begin.\\
+Since the current supply of coins (A) increases with every new block, each successive reward will decrease by a small fraction of a coin. The reward continues to decrease until it equals 1.2 AEON per block. At that time, the initial emmission curve will end, and the \textbf{tail emission} reward (1.2 AEON for each 4 minute block) will begin. The tail is estimated to begin in the July/August timeframe of 2022.\\
 \\
-The tail emission will continue without end, issuing a constant reward of 1.2 AEON for each 4 minute block. This works out to 432 new coins per day (157,680 per year), simulating an inflation rate of less than 1\%. This inflation rate naturally decreases over time as the supply increases.\\
+The following graph shows the number of coins rewarded for each block over time.
+
+\begin{center}
+	\includegraphics[width=5.5in]{aeonEmissionCurve}
+\end{center}
+The hard fork in 2015 modified the emission process, by increasing the block creation time from every 1 minute to every 4 minutes. The number of coins paid for each block was also increased by 4 times. This modification greatly reduced the number of block reward transactions in the block chain, while allowing the total number of coins emitted to remain constant.\\
 \\
-TODO: See the graph below for a visual representation of the AEON emission curves.\\
+The following graph shows the total supply of AEON coins over time. Notice that the supply increased smoothly, despite the hard fork mentioned above.
+
+\begin{center}
+	\includegraphics[width=5.5in]{aeonSupplyCurve}
+\end{center}
+Note that the tail emission has no defined end, and provides an initial inflation rate of less than 1\%. During this phase, the rate of inflation decreases as the supply of coins grows, by a constant 157,680 AEON per year. By the year 2030, there will be roughly 19.5 million coins in total.
 
 \subsubsection{Transaction Fees}
 TODO:  Need details on transaction fees.
