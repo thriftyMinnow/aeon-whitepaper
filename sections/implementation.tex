@@ -74,17 +74,23 @@ Furthermore, as seen in the illustration in the previous section, the ring signa
 The Monero development team has created a solution for these weaknesses, known as \textbf{Ring Confidential Transactions} (RingCT).  The AEON community plans to adopt this solution as soon as it can be validated.  There are more details on the new RingCT protocol in the Monero publication "Ring Confidential Transactions." (See https://lab.getmonero.org/pubs/MRL-0005.pdf.)
 
 \subsection{Coin Minting Process}
-TODO:  finish this section!\\
-\\
 As stated in section \ref{secPoW} \textit{Proof of Work (PoW)}, new AEON coins are distributed over time, to mining applications (called \textbf{nodes}), as a reward for calculating the correct Proof Of Work. This section will focus on the details of the coin distribution process.
 
 \subsubsection{Block Creation}
 One of the main functions of the mining node is to validate transactions as they are submitted to the network. For a transaction to be valid, it must pass several checks. The transaction must be properly formatted. The coins being spent must be "signed" by the valid owner of the coins. And finally, the coins being spent must not have already been spent by their owner in a previous block (a \textbf{double spend}). As the node receives and validates transactions, it places them together in a collection, called a \textbf{block}.\\
 \\
-As mentioned earlier in this paper, AEON implements an algorithm to automatically adjust the allowed block size up or down, based on the previous 100 blocks.  This effectively allows miners to include more transactions in each block when the network transaction rate requires it. Miners are not allowed to increase their block size indiscriminately, and are assessed a reward penalty if they create a block larger than the median size.\\
+As mentioned earlier in this paper, AEON implements an algorithm to automatically adjust the allowed block size up or down, based on the previous 100 blocks.  This effectively allows miners to include more transactions in each block when the network transaction rate requires it. Miners are not allowed to increase their block size indiscriminately, and are assessed a reward penalty if they create a block larger than the median size. Twice the median size is the largest block allowed. The reward penalty is calculated by the following formula:
+\begin{equation*}
+Penalty = BaseReward * ( (\frac{BlockSize}{M}) - 1 )^2 
+\end{equation*}
+where\\
+\\
+\textit{
+BaseReward = the current block reward\\
+BlockSize = the size of the new block\\
+M = median block size for last 100 blocks}\\
 \\
 Governing the block size is necessary, to keep the transaction processing speed uniform across all nodes in the network.
-
 
 \subsubsection{Block Time Interval}
 A single block of AEON transactions is added to the public blockchain once every 4 minutes, on average.  This timing must be ensured by constantly adjusting the \textit{difficulty} of the Proof Of Work calculation.  Otherwise the addition of more miners to the network would result in calculating the correct PoW faster than the desired 4 minutes.\\
@@ -93,7 +99,6 @@ After a mining node assembles a single block of valid transactions, it races wit
 
 \subsubsection{Block Reward}
 When a mining node calculates a correct PoW and adds a block to the blockchain, it includes a transaction of new coins, paid to it's mining wallet.  This payment of new coins is known as the \textbf{block reward}. The number of coins in the block reward decreases with each block on a smooth curve, known as the \textbf{emission curve}. Each reward is calculated based on the following equation:
-
 \begin{equation*}
    Reward = \frac{M-A}{2^{18}}
 \end{equation*}
@@ -117,20 +122,24 @@ The following graph shows the total supply of AEON coins over time. Notice that 
 \begin{center}
 	\includegraphics[width=5.5in]{aeonSupplyCurve}
 \end{center}
-Note that the tail emission has no defined end, and provides an initial inflation rate of less than 1\%. During this phase, the rate of inflation decreases as the supply of coins grows, by a constant 157,680 AEON per year. By the year 2030, there will be roughly 19.5 million coins in total.
+Note that the tail emission has no defined end, and provides an initial inflation rate of less than 1\%. During this phase, the rate of inflation decreases as the supply of coins grows by a constant 157,680 AEON per year. By the year 2030, there will be roughly 19.5 million coins in total.
 
 \subsubsection{Transaction Fees}
-TODO:  Need details on transaction fees.
-
-When the transaction fees are greater than the block-size penalty, miners are likely to increase the block size which also increases the speed at which those transactions are processed.  This approach allows the AEON blockchain to self-adjust it's processing speed as transaction traffic increases and decreases over time, while also creating a dynamic market for transaction fees.\\
+For every transaction, the sender must pay a \textbf{transaction fee} in addition to the coins sent. This fee is paid to the miner who successfully calculates the PoW, and includes the transaction in their block. (Thus, the miner recieves the Block Reward and the sum of all transaction fees that were included in the block.)\\
+\\
+The transaction fee will be higher if the sender increases the priority of the transaction. This higher transaction fee will cause the mining nodes to prefer it when selecting transactions for the next block. Thus, a transaction's priority, and consequently the speed at which it gets processed, is tied directly to its transaction fee.\\
+\\
+The transaction fee will also be higher for transactions that contain more data, since the base fee is calculated on a per-kilobyte basis. (This does not have an impact on the priority.) The amount of data in a transaction increases in the following scenarios: 
+\begin{itemize}
+	\item The amount sent consists of many small amounts that the sender received.
+	\item The sender increased the level of privacy, by requesting more than the default number of mixins.
+\end{itemize}
+\textbf{Note on transaction fees, block size, and transaction throughput:}\\
+When creating a block of transactions, if the sum of the transaction fees are greater than the block-size penalty, miners are likely to increase the number of transactions in a block. This approach allows the AEON blockchain to self-adjust it's processing speed as transaction traffic changes over time, while also creating a dynamic market for transaction fees.\\
 \\
 
+% 
+%Is there a base transaction fee?  Fee equation?
+%Is the reward penalty the same as Monero?  
 
 
-% Is 2^18 the # of blocks in main emission??
-
-Will cover:\\
-\\
-- should include a pic showing a timeline of when we will hit the tail, including expected avg block rewards along the way as they decrease\\
-
-- Describe transaction fee calculations in this section
