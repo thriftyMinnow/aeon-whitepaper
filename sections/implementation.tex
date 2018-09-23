@@ -129,7 +129,7 @@ For every transaction, the sender must pay a \textbf{transaction fee} in additio
 \\
 The transaction fee will be higher if the sender increases the priority of the transaction. This higher transaction fee will cause the mining nodes to prefer it when selecting transactions for the next block. Thus, a transaction's priority, and consequently the speed at which it gets processed, is tied directly to its transaction fee.\\
 \\
-The transaction fee will also be higher for transactions that contain more data, since the base fee is calculated on a per-kilobyte basis. (This does not have an impact on the priority.) The amount of data in a transaction increases in the following scenarios: 
+The transaction fee will also be higher for transactions that contain more data, since the base fee is calculated on a per-kilobyte basis. (This increase does not impact the priority.) The amount of data in a transaction increases in the following scenarios: 
 \begin{itemize}
 	\item The amount sent consists of many small amounts that the sender received.
 	\item The sender increased the level of privacy, by requesting more than the default number of mixins.
@@ -138,8 +138,5 @@ The transaction fee will also be higher for transactions that contain more data,
 When creating a block of transactions, if the sum of the transaction fees are greater than the block-size penalty, miners are likely to increase the number of transactions in a block. This approach allows the AEON blockchain to self-adjust it's processing speed as transaction traffic changes over time, while also creating a dynamic market for transaction fees.\\
 \\
 
-% 
-%Is there a base transaction fee?  Fee equation?
-%Is the reward penalty the same as Monero?  
 
 
