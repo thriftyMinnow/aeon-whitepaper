@@ -11,7 +11,12 @@ The files are organized with a "main" file called aeon-whitepaper.tex, which is 
 When making a pull request, the corresponding rendered aeon-whitepaper.pdf should also be included if possible.
 
 ## Change History
+Version:  0.03 <br />
+Date:  October 20, 2018 <br />
+Small revision. Incorporated some community feedback, plus minor punctuation edits.
+
 Version:  0.02 <br />
+Date:  October 6, 2018 <br />
 Complete first draft.
 
 Version: 0.01 <br />
