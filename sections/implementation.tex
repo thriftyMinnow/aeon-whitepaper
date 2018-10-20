@@ -17,9 +17,9 @@ Consider the example of paying for a meal at a restaurant. With electronic payme
 \\
 In contrast, paying for a meal with cash is \textit{trustless} (requires no trusted 3rd party to carry out the transaction). It is also \textit{anonymous} in that it does not require the payer to give their name or any other personal information to the receiver.\\
 \\
-To achieve trustless, decentralized transactions, AEON utilizes a proof of work "mining" process.  For a definition of PoW, the Bitcoin Wiki at https://en.bitcoin.it/wiki/Proof\_of\_work offers this:\\
+To achieve trustless, decentralized transactions, AEON utilizes a proof of work “mining" process.  For a definition of PoW, the Bitcoin Wiki at https://en.bitcoin.it/wiki/Proof\_of\_work offers this:\\
 \\
-"A \textbf{proof of work} is a piece of data which is difficult (costly, time-consuming) to produce but easy for others to verify and which satisfies certain requirements. Producing a proof of work can be a random process with low probability so that a lot of trial and error is required \textit{on average} before a valid proof of work is generated."\\
+“A \textbf{proof of work} is a piece of data which is difficult (costly, time-consuming) to produce but easy for others to verify and which satisfies certain requirements. Producing a proof of work can be a random process with low probability so that a lot of trial and error is required \textit{on average} before a valid proof of work is generated."\\
 \\
 The goal of the proof of work process, is to provide decentralization of both the distribution of coins and the validation of transactions. The difficult trial-and-error nature of producing the PoW is an effective means of randomizing which miner will create and correctly validate the next block of transactions, and receive the reward of new coins. This randomization ensures that the processing of transactions is spread indiscriminately over the entire network.\\
 \\
@@ -27,12 +27,12 @@ A disadvantage of the PoW function for many cryptocurrencies (including Bitcoin)
 \\
 An improved PoW algorithm, eventually called CryptoNight, was proposed in 2012 by the CryptoNote project. According to the CryptoNote whitepaper (https://cryptonote.org/whitepaper.pdf):\\
 \\
-"Our primary goal is to close the gap between CPU (majority) and GPU/FPGA/ASIC (minority) miners. It is appropriate that some users can have a certain advantage over others, but their investments should grow at least linearly with the power. More generally, producing special-purpose devices has to be as less profitable as possible."\\
+“Our primary goal is to close the gap between CPU (majority) and GPU/FPGA/ASIC (minority) miners. It is appropriate that some users can have a certain advantage over others, but their investments should grow at least linearly with the power. More generally, producing special-purpose devices has to be as less profitable as possible."\\
 \\
 The CryptoNight algorithm accomplishes this goal in 2 primary ways.
 \begin{itemize}
 	\item It uses built-in CPU instructions, which are difficult to implement in specialized hardware.
-	\item It relies on access to unpredictable locations in a 2 MB "scratchpad" of CPU memory, rather than relying solely on CPU processing speed.
+	\item It relies on access to unpredictable locations in a 2 MB “scratchpad" of CPU memory, rather than relying solely on CPU processing speed.
 \end{itemize}
 These factors effectively limit the advantages of GPU's over CPU's and make it too costly to produce specialized ASIC hardware for mining.\\
 \\
@@ -54,7 +54,7 @@ The following picture, from the CryptoNote whitepaper, shows that the one-time p
 \subsubsection{One-Time Ring Signatures}
 After funds are received via a one-time public key, the recipient is able to spend the funds at any time, using a one-time ring signature.  The goal of the ring signature is to keep the sending address anonymous on the blockchain.\\
 \\
-In non-private implementations, the sender will "sign" their payment transaction with a private key that can be validated only by using the sender's corresponding public key.  Only the sender knows the private key, but the whole world can see that the sender's public key was used to validate the transaction.\\
+In non-private implementations, the sender will “sign" their payment transaction with a private key that can be validated only by using the sender's corresponding public key.  Only the sender knows the private key, but the whole world can see that the sender's public key was used to validate the transaction.\\
 \\
 The idea behind the ring signature is straightforward:  a sender produces a signature which can be validated by a \textit{set} of public keys rather than a unique public key.  The identity of the one who produced the signature is indistinguishable from the owners of the additional public keys within the set.\\
 \\
@@ -63,7 +63,7 @@ Consider an example:  Bob wishes to send 5 AEON to Kim.  The picture below shows
 \begin{center}
 	\includegraphics[width=6.0in]{RingSignature2}
 \end{center}
-Note in the example, that the 2 "decoy" public signatures are actually past transaction outputs that are pulled from the AEON blockchain. Thus, all 3 inputs in the set are valid signed inputs for 5 AEON, but only Bob's is valid for \textit{this} transaction.  It is impossible for someone looking at this transaction on the blockchain to determine which of the 3 inputs was the valid one.  Additionally, all 3 of the inputs will likely show up as decoys in multiple other transactions.\\
+Note in the example, that the 2 “decoy" public signatures are actually past transaction outputs that are pulled from the AEON blockchain. Thus, all 3 inputs in the set are valid signed inputs for 5 AEON, but only Bob's is valid for \textit{this} transaction.  It is impossible for someone looking at this transaction on the blockchain to determine which of the 3 inputs was the valid one.  Additionally, all 3 of the inputs will likely show up as decoys in multiple other transactions.\\
 \\
 In the AEON blockchain, the total number of inputs, known as the \textbf{ring size}, is set to 3 by default. The sender may choose a different ring size for their transaction, and the selection of each decoy input is handled automatically by AEON. More than 3 inputs will result in a higher level of anonymity, but will require a higher transaction fee.\\
 \\
@@ -74,13 +74,13 @@ One possible attack against Anonymity is analysis based on the amounts sent in a
 \\
 Furthermore, as seen in the illustration in the previous section, the ring signature approach requires the specific amount of each of the inputs to match.  For less common amounts, there will be fewer public keys available for decoys, reducing the level of anonymity.\\
 \\
-The Monero development team has created a solution for these weaknesses, known as \textbf{Ring Confidential Transactions} (RingCT), which will obscure transaction amounts on the blockchain.  The AEON community plans to adopt this solution as soon as it can be incorporated by the development team.  There are more details on the new RingCT protocol in the Monero publication "Ring Confidential Transactions." (See https://lab.getmonero.org/pubs/MRL-0005.pdf.)
+The Monero development team has created a solution for these weaknesses, known as \textbf{Ring Confidential Transactions} (RingCT), which will obscure transaction amounts on the blockchain.  The AEON community plans to adopt this solution as soon as it can be incorporated by the development team.  There are more details on the new RingCT protocol in the Monero publication “Ring Confidential Transactions." (See https://lab.getmonero.org/pubs/MRL-0005.pdf.)
 
 \subsection{Coin Minting Process}
 As mentioned in section \ref{secPoW} \textit{Achieving Trustless Transactions}, new AEON coins are distributed over time, to mining applications (called \textbf{nodes}), as a reward for calculating the correct Proof Of Work. This section will focus on the details of the coin distribution process.
 
 \subsubsection{Block Creation}
-One of the main functions of the mining node is to validate transactions as they are submitted to the network. For a transaction to be valid, it must pass several checks. The transaction must be properly formatted. The coins being spent must be "signed" by the valid owner of the coins. And the coins being spent must not have already been spent by their owner in a previous transaction (a \textbf{double spend}). As the node receives and validates transactions, it places them together in a collection, called a \textbf{block}.\\
+One of the main functions of the mining node is to validate transactions as they are submitted to the network. For a transaction to be valid, it must pass several checks. The transaction must be properly formatted. The coins being spent must be “signed" by the valid owner of the coins. And the coins being spent must not have already been spent by their owner in a previous transaction (a \textbf{double spend}). As the node receives and validates transactions, it places them together in a collection, called a \textbf{block}.\\
 \\
 As mentioned earlier in this paper, AEON implements an algorithm to automatically adjust the allowed block size up or down, based on the previous 100 blocks.  This effectively allows miners to include more transactions in each block when the network transaction rate requires it. Miners are not allowed to increase their block size indiscriminately, and are assessed a \textbf{reward penalty} if they create a block larger than the median size. Twice the median size is the largest block allowed. The reward penalty is calculated by the following formula:
 \begin{equation*}
