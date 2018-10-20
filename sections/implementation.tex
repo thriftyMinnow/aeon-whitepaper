@@ -56,23 +56,25 @@ After funds are received via a one-time public key, the recipient is able to spe
 \\
 In non-private implementations, the sender will "sign" their payment transaction with a private key that can be validated only by using the sender's corresponding public key.  Only the sender knows the private key, but the whole world can see that the sender's public key was used to validate the transaction.\\
 \\
-The idea behind the ring signature is straightforward:  a sender produces a signature which can be validated by a set of public keys rather than a unique public key.  The identity of the one who produced the signature is indistinguishable from the owners of the additional public keys within the set.\\
+The idea behind the ring signature is straightforward:  a sender produces a signature which can be validated by a \textit{set} of public keys rather than a unique public key.  The identity of the one who produced the signature is indistinguishable from the owners of the additional public keys within the set.\\
 \\
-Consider an example:  Bob wishes to send 5 AEON to Kim.  The picture below shows the ring signature concept for this transaction on the blockchain.\\
+Consider an example:  Bob wishes to send 5 AEON to Kim.  The picture below shows the ring signature concept for this transaction on the blockchain, using a default ring size of 3.\\
 
 \begin{center}
 	\includegraphics[width=6.0in]{RingSignature2}
 \end{center}
 Note in the example, that the 2 "decoy" public signatures are actually past transaction outputs that are pulled from the AEON blockchain. Thus, all 3 inputs in the set are valid signed inputs for 5 AEON, but only Bob's is valid for \textit{this} transaction.  It is impossible for someone looking at this transaction on the blockchain to determine which of the 3 inputs was the valid one.  Additionally, all 3 of the inputs will likely show up as decoys in multiple other transactions.\\
 \\
-In the AEON blockchain, the default number of decoys, known as \textbf{mixins}, is set to 3.  The choosing of each mixin is handled automatically by AEON. The sender may, however choose a different number of mixins for their transaction.  More than 3 mixins will result in a higher level of anonymity, but will require a higher transaction fee.  For non-sensitive transactions to be processed with a slightly lower fee, a mixin value of 0 can be chosen.  To preserve overall blockchain anonymity the number of 0-mixin transactions is limited to no more than 10\% of the transactions in each block.  Additionally, a mixin value of 1 is not allowed since it does not provide a high enough assurance against blockchain analysis.
+In the AEON blockchain, the total number of inputs, known as the \textbf{ring size}, is set to 3 by default. The sender may choose a different ring size for their transaction, and the selection of each decoy input is handled automatically by AEON. More than 3 inputs will result in a higher level of anonymity, but will require a higher transaction fee.\\
+\\
+For non-sensitive transactions to be processed with a slightly lower fee, a ring size of 1 can be chosen.  To preserve overall blockchain anonymity the number of such transactions is limited to no more than 10\% of the transactions in each block.  Additionally, a ring size of 2 is not allowed since it does not provide a high enough assurance against blockchain analysis.
 
 \subsubsection{Known Weaknesses}
 One possible attack against Anonymity is analysis based on the amounts sent in a transaction. If a bad actor knows, for example, that 0.9 coins have been sent at a certain time, then they may search for transactions containing 0.9 coins to attempt to identify a sender.  This is negated by the use of one-time keys and other factors, but the visibility of the amounts on the blockchain is a downside.\\
 \\
-Furthermore, as seen in the illustration in the previous section, the ring signature approach requires the specific amount of each of the mixins to match.  For less common amounts, there will be fewer public keys available for mixins, reducing the level of anonymity.\\
+Furthermore, as seen in the illustration in the previous section, the ring signature approach requires the specific amount of each of the inputs to match.  For less common amounts, there will be fewer public keys available for decoys, reducing the level of anonymity.\\
 \\
-The Monero development team has created a solution for these weaknesses, known as \textbf{Ring Confidential Transactions} (RingCT).  The AEON community plans to adopt this solution as soon as it can be incorporated by the development team.  There are more details on the new RingCT protocol in the Monero publication "Ring Confidential Transactions." (See https://lab.getmonero.org/pubs/MRL-0005.pdf.)
+The Monero development team has created a solution for these weaknesses, known as \textbf{Ring Confidential Transactions} (RingCT), which will obscure transaction amounts on the blockchain.  The AEON community plans to adopt this solution as soon as it can be incorporated by the development team.  There are more details on the new RingCT protocol in the Monero publication "Ring Confidential Transactions." (See https://lab.getmonero.org/pubs/MRL-0005.pdf.)
 
 \subsection{Coin Minting Process}
 As mentioned in section \ref{secPoW} \textit{Achieving Trustless Transactions}, new AEON coins are distributed over time, to mining applications (called \textbf{nodes}), as a reward for calculating the correct Proof Of Work. This section will focus on the details of the coin distribution process.
@@ -133,7 +135,7 @@ The transaction fee will be higher if the sender increases the priority of the t
 The transaction fee will also be higher for transactions that contain more data, since the base fee is calculated on a per-kilobyte basis. (This increase does not impact the priority.) The amount of data in a transaction increases in the following scenarios: 
 \begin{itemize}
 	\item The amount sent consists of many small amounts that the sender received
-	\item The sender increased the level of privacy, by requesting more than the default number of mixins
+	\item The sender increases the level of privacy, by requesting a higher ring size than the default
 \end{itemize}
 \textbf{Note on transaction fees, block size, and transaction throughput:}\\
 When creating a block of transactions, if the sum of the transaction fees are greater than the block-size penalty, miners are likely to increase the number of transactions in a block. This approach allows the AEON blockchain to self-adjust it's processing speed as transaction traffic changes over time, while also creating a dynamic market for transaction fees.\\
